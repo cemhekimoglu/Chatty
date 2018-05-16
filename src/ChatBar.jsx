@@ -21,10 +21,11 @@ class ChatBar extends Component {
 
   render() {
     // let username = this.state.currentUser
-    return (<footer className="chatbar">
-      <input id="chatbar-username" name="username" onKeyDown={this.handleUserSubmit} placeholder={this.props.name || "Your Name (Optional)"}/>
-      <input id="chatbar-message" name="content" onKeyDown={this.handleKeyPress} placeholder="Type a message and hit ENTER"/>
-    </footer>);
+    return (
+      <footer className="chatbar">
+        <input className="chatbar-username" name="username" onKeyDown={this.handleUserSubmit} placeholder={this.props.name || "Your Name (Optional)"}/>
+        <input className="chatbar-message" name="content" onKeyDown={this.handleKeyPress} placeholder="Type a message and hit ENTER"/>
+      </footer>);
   }
 }
 export default ChatBar;

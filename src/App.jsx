@@ -7,11 +7,11 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-  currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
-  messages: [],
-  id: "",
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: [],
+      id: "",
 
-}
+    }
   }
 
   handleUserChange = name => {
@@ -83,15 +83,9 @@ break;
   render() {
     return (
       <div>
-      <NavBar userNums ={this.state.displayUserNumber}/>
-      <MessageList messages={this.state.messages}
-      updateUser={this.state.messages}
-      />
-      <ChatBar name={this.state.currentUser.name}
-      handleUserChange={this.handleUserChange}
-      onMessageSubmit={this.handleMessageSubmit}
-      placeholder="Type a message and hit ENTER"
-      />
+        <NavBar userNums ={this.state.displayUserNumber}/>
+        <MessageList messages={this.state.messages} updateUser={this.state.messages}/>
+        <ChatBar name={this.state.currentUser.name} handleUserChange={this.handleUserChange} onMessageSubmit={this.handleMessageSubmit} placeholder="Type a message and hit ENTER"/>
       </div>
     );
   }
