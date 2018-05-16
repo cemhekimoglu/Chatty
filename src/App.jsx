@@ -1,58 +1,97 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import NavBar from './NavBar.jsx';
 
-const uuidv4 = require('uuid/v4');
-
-
 class App extends Component {
-
-  constructor(props) {
+  constructor(props){
     super(props);
-    // this is the *only* time you should assign directly to state:
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
-    };
+  currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+  messages: [],
+  id: "",
+
+}
+  }
+
+  handleUserChange = name => {
+    const type = "postNotification";
+    const content = `${this.state.currentUser.name} changed their name to ${name}`
+    const message = {
+      type,
+      content
+    }
+    this.socket.send(JSON.stringify({message}))
+    this.setState({currentUser:{name}})
+  }
+
+   handleMessageSubmit = content => {
+     const username = this.state.currentUser.name;
+     const type = "postMessage"
+     const message = {
+       type,
+       username,
+       content
+     }
+     this.socket.send(JSON.stringify({message}))
   }
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
-    // setTimeout(() => {
-    //   console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      // const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      // const messages = this.state.messages.concat(newMessage);
-      this.socket = new WebSocket(
-        process.env.REACT_APP_SOCKET_SERVER || "ws://localhost:3001",
-      );
 
-      // Connection opened
-      this.socket.onopen = event => {
-        this.socket.send("{\"message\":\"Hello Server\"}");
+  console.log("componentDidMount <App />");
+  this.socket = new WebSocket("ws://localhost:3001", "Howdy");
+
+   this.socket.addEventListener("message", event => {
+     console.log(event.data);
+     let message = JSON.parse(event.data);
+
+     switch(message.message.type){
+
+       case "incomingMessage":
+       const messageFormat = {
+         username: message.message.username,
+         content: message.message.content,
+         id: message.message.id
+       }
+       let messages = [...this.state.messages, messageFormat]
+       this.setState({messages});
+      break;
+
+     case "incomingNotification":
+      console.log(event.data)
+      const notifyMessage = {
+        username: message.message.username,
+        content: message.message.content,
+        id: message.message.id
       }
+       messages = [...this.state.messages, notifyMessage]
+      this.setState({messages});
+     break;
 
-      // Listen for messages
-      const EVENT_MESSAGE_KEY = "message";
-    // }, 3000);
-  }
-
-  addMessage=(message) => {
-    const messages = this.state.messages.concat(message)
-    console.log(messages);
-    this.setState({messages: messages})
-    this.socket.send(JSON.stringify(message))
-  }
-
-
+      case "userNumber":
+        const displayUserNumber = message.message.numberofUsers
+        console.log("Numbeer of users" ,displayUserNumber);
+        this.setState({displayUserNumber})
+        console.log(this.state);
+break;
+     default:
+     console.log("Unknown data type")
+   }
+   });
+}
 
   render() {
     return (
       <div>
-        <NavBar/>
-        <MessageList messages={this.state.messages}/>
-        <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage}/>
+      <NavBar userNums ={this.state.displayUserNumber}/>
+      <MessageList messages={this.state.messages}
+      updateUser={this.state.messages}
+      />
+      <ChatBar name={this.state.currentUser.name}
+      handleUserChange={this.handleUserChange}
+      onMessageSubmit={this.handleMessageSubmit}
+      placeholder="Type a message and hit ENTER"
+      />
       </div>
     );
   }

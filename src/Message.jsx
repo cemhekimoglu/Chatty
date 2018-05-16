@@ -1,18 +1,24 @@
 import React, {Component} from 'react';
 
 class Message extends Component {
+  constructor(props) {
+    super(props);
+
+  }
+
   render() {
-    return (
-      <main className="messages">
-        <div className="message">
-          <span className="message-username">{this.props.message.username}</span>
-          <span className="message-content">{this.props.message.content}</span>
-        </div>
-        <div className="message system">
-          Anonymous1 changed their name to nomnom.
-        </div>
-      </main>
-    );
+
+    if (!this.props.message.username) {
+      return (<div className="notification">
+        <span className="notification-content">{this.props.message.content}</span>
+      </div>)
+    } else {
+
+      return (<p>
+        <span className="message-username">{this.props.message.username}</span>
+        <span className="message-content">{this.props.message.content}</span>
+      </p>);
+    }
   }
 }
 export default Message;
